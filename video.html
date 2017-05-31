@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>video +h5</title>
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+    <style>
+        .container{
+            margin:0 auto;
+        }
+        /*视频播放区*/
+.totel{
+    position: relative;
+    width: 510px;
+    background-color: black;
+}
+ .totel .control{
+    width: 480px;
+    height: 18px;
+    background-color: rgba(149,59,0,0.6);
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: none;
+}
+/*开关*/
+.totel .switch{
+    position: absolute;
+    left:10px;
+    top:1px;
+    width: 16px;
+    height: 16px;
+    font-size:14px;
+    text-align: center;
+    line-height: 16px;
+    color:#fff;
+    cursor: pointer;
+}
+/*进度条*/
+.totel .progress{
+    position: absolute;
+    width: 322px;
+    height: 6px;
+    background-color: #aba39f;
+    top: 6px;
+    left: 38px;
+}
+/*时间*/
+.totel .time{
+    position: absolute;
+    top: 1px;
+    right: 38px;
+    font-size:8px ;
+    color:#fff;
+    text-align: center;
+}
+.totel .curr-progress{
+    height: 100%;
+    background-color: #edebea;
+    width: 2px;
+    lighting-color: #fff;
+}
+/*全屏*/
+.totel .extend{
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    font-size:8px ;
+    color:#fff;
+    text-align: center;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container totel">
+         <div class="totel">
+            <video id="vid" src="./fun.mp4">
+
+            </video>
+            <!--控制条-->
+            <div class="control">
+                <!-- 开关-->
+                <span class="switch icon-play"></span>
+                <!--进度条-->
+                <div class="progress">
+                    <div class="curr-progress"></div>
+                </div>
+                <!-- 时间-->
+                <div class="time">
+                    <span class="curr-time">00:00</span>/<span class="total-time">00:00</span>
+                </div>
+                <!--全屏-->
+                <span class="extend icon-resize-full"></span>
+         </div>
+    </div>
+</body>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script>
+    /**
+ * 鼠标经过显示进度条 平时隐藏
+ * 点击切换开关 并相应播放与暂停
+ * 设置进度
+ * 点击全屏 进行全屏播放
+ */
+var playBtn=$(".switch")//获取开关
+var video=$("#vid")[0]
+var totaltime=$(".total-time")[0]//总时长
+var currTime=$(".curr-time")[0]//当前时长
+var currProgress=$(".curr-progress")[0]
+var extend=$(".extend")[0]
+var Ttime=0;
+// 鼠标经过显示进度条 平时隐藏
+$(".totel").mouseenter(function () {
+   $(".control").css("display","block")
+}).mouseleave(function () {
+    $(".control").css("display","none")
+})
+
+//点击切换开关 并相应播放与暂停
+playBtn.click(function () {
+    if(video.paused){
+        video.play();
+        $(this).removeClass("icon-play")
+        $(this).addClass("icon-pause")
+    }else{
+        video.pause();
+        $(this).addClass("icon-play")
+        $(this).removeClass("icon-pause")
+    }
+})
+//设置进度
+video.oncanplay=function(){
+
+//            获取视频的总时长
+    Ttime=video.duration;
+
+//             转换成十分秒的格式
+    var h=Math.floor(Ttime/3600);
+
+    var m=Math.floor(Ttime%3600/60);
+
+    var s=Math.floor(Ttime%60);
+
+    h=h>10?h:'0'+h;
+    m=m>10?m:'0'+m;
+    s=s>10?s:'0'+s;
+
+    totaltime.innerHTML=m+":"+s;
+}
+video.ontimeupdate=function(){
+
+    var Ctime=video.currentTime;
+
+    //转换成十分秒的格式
+    var h=Math.floor(Ctime/3600);
+
+    var m=Math.floor(Ctime%3600/60);
+
+    var s=Math.floor(Ctime%60);
+
+    h=h>10?h:'0'+h;
+    m=m>10?m:'0'+m;
+    s=s>10?s:'0'+s;
+
+    currTime.innerHTML=m+":"+s;
+
+    // 动态改变进度条
+    var value=Ctime/Ttime;
+    currProgress.style.width=value*100+"%";
+}
+
+//全屏
+extend.onclick=function(){
+    video.webkitRequestFullScreen();
+    video.requestFullScreen();
+    video.mozRequestFullScreen();
+}
+
+
+</script>
+</html>
